@@ -57,7 +57,7 @@ class ProductController extends BaseController
 
     public function update(Request $request, $id)
     {
-        //dd($request);
+        
         $request->validate([
             'name' => 'required',
             'price' => 'required',

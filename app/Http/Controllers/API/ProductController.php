@@ -46,8 +46,7 @@ class ProductController extends BaseController
             $input['handle'] = str_replace(' ', '-', $name) . '-' . $newProduct->id;
             $newProduct->update(['handle' => $input['handle']]);
             return response()->json(['message' => 'Product created successfully.'], 201);
-        } 
-        else {
+        } else {
             $input = $request->all();
             $input['handle'] = str_replace(' ', '-', $name);
             $newProduct = Product::create($input);
@@ -55,10 +54,11 @@ class ProductController extends BaseController
         }
     }
 
-    
+
     public function update(Request $request, $id)
     {
-       $request->validate([
+        //dd($request);
+        $request->validate([
             'name' => 'required',
             'price' => 'required',
             'category' => 'required',
@@ -66,36 +66,31 @@ class ProductController extends BaseController
         ]);
 
         $product = Product::find($id);
-        if($product){
+        if ($product) {
             $name = $request->input('name');
             $existingProduct = Product::where('name', $name)->first();
             $input = $request->all();
 
             if ($existingProduct) {
                 $input['handle'] = str_replace(' ', '-', $name) . '-' . $product->id;
-            } 
-            else {
+            } else {
                 $input['handle'] = str_replace(' ', '-', $name);
             }
             $product->update($input);
             return $this->sendResponse(new ProductResource($product), 'Product updated successfully.');
-        } 
-        else {
+        } else {
             return $this->sendError('Product not found.');
         }
-
     }
 
     public function destroy($id)
     {
         $product = Product::find($id);
-        if($product){
+        if ($product) {
             $product->delete();
             return $this->sendResponse([], 'Product deleted successfully.');
-        } 
-        else {
+        } else {
             return $this->sendError('Product not found.');
         }
     }
-    
-}   
+}

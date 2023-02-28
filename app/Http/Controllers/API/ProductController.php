@@ -14,6 +14,10 @@ class ProductController extends BaseController
     public function index()
     {
         $products = Product::all();
+        $products = product::latest()->paginate(5);
+
+        return view('products.index', compact('products'))
+        ->with('i', (request()->input('page', 1) - 1) * 5);
         return $this->sendResponse(ProductResource::collection($products), 'Products retrieved successfully.');
     }
 

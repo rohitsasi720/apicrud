@@ -9,15 +9,21 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+Route::get('products', [ProductController::class, 'index']);
+
+//uncomment this out after testing the delete route
+Route::delete('product/{id}', [ProductController::class, 'destroy']);
+
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('product/{id}', [ProductController::class, 'show']);
-    Route::get('products', [ProductController::class, 'index']);
 
     Route::middleware(RoleMiddleware::class . ':superadmin')->group(function () {
         Route::post('product', [ProductController::class, 'store']);
         Route::put('product/{id}', [ProductController::class, 'update']);
-        Route::delete('product/{id}', [ProductController::class, 'destroy']);
+
+        //commenting this out to test the delete route
+        //Route::delete('product/{id}', [ProductController::class, 'destroy']);
     });
 
     Route::middleware(RoleMiddleware::class . ':admin,superadmin')->group(function () {

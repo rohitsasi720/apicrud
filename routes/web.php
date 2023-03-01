@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\ProductController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,3 +27,6 @@ Route::resource('products', ProductController::class);
 // Route::post('login', [SessionsController::class, 'store'])->middleware('guest');
 
 // Route::post('logout', [SessionsController::class, 'destroy'])->middleware('auth');
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

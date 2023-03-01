@@ -50,14 +50,24 @@
     
     {!! $products->links('pagination::bootstrap-5') !!}
 
-    <script src="{{ asset('js/api.js') }}"></script>
+    {{-- <script src="{{ asset('js/api.js') }}"></script> --}}
 <script>
+    // Get the alert message from session storage
+const alertMessage = sessionStorage.getItem("alertMessage");
+if (alertMessage) {
+    // Display the alert message
+    const alertDiv = document.createElement("div");
+    alertDiv.className = "alert alert-success my-2";
+    alertDiv.innerHTML = `<p>${alertMessage}</p>`;
+    document.body.appendChild(alertDiv);
+    sessionStorage.removeItem("alertMessage");
+}
 
 async function deleteProduct(productId) {
   try {
     const result = confirm("Are you sure you want to delete this product?");
     if (result) {
-      await deleteProduct(productId);
+      await deleteProductApi(productId);
       window.location.reload();
     }
   } catch (error) {

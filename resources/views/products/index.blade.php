@@ -1,11 +1,7 @@
 @extends('products.layout')
-     
+
 @section('content')
-@if ($message = Session::get('created'))
-        <div class="alert alert-success my-2">
-            <p>{{ $message }}</p>
-        </div>
-    @endif
+
     <div class="row">
         <div class="col-lg-12 margin-tb py-4">
             <div class="pull-right">
@@ -40,9 +36,9 @@
             <td>{{ $product->price }}</td>
             <td><img src="/images/{{ $product->image }}" width="100px"></td>
             <td>
-                    <a class="btn btn-info" href="{{ route('products.show',$product->id) }}">Show</a> 
+                    <button type="button" class="btn btn-success" onclick="event.preventDefault(); showProduct({{ $product->id }})">Show</button>
                     <a class="btn btn-primary" href="{{ route('products.update',$product->id) }}">Edit</a>
-                    <button class="btn btn-danger" onclick="deleteProduct({{ $product->id }})">Delete</button>
+                    <button type="button" class="btn btn-danger" onclick="event.preventDefault(); deleteProduct({{ $product->id }})">Delete</button>
             </td>
         </tr>
         @endforeach
@@ -52,8 +48,8 @@
 
     {{-- <script src="{{ asset('js/api.js') }}"></script> --}}
 <script>
-    // Get the alert message from session storage
-const alertMessage = sessionStorage.getItem("alertMessage");
+
+    const alertMessage = sessionStorage.getItem("alertMessage");
 if (alertMessage) {
     // Display the alert message
     const alertDiv = document.createElement("div");
@@ -61,6 +57,16 @@ if (alertMessage) {
     alertDiv.innerHTML = `<p>${alertMessage}</p>`;
     document.body.appendChild(alertDiv);
     sessionStorage.removeItem("alertMessage");
+}
+
+async function showProduct(productId) {
+  try {
+    const product = await getProductApi(productId);
+    window.location.href = `/products/${productId}`;
+  } catch (error) {
+    console.error(error);
+    alert("Failed to retrieve product. Please try again later.");
+  }
 }
 
 async function deleteProduct(productId) {

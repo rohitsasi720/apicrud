@@ -7,6 +7,7 @@ use App\Http\Controllers\API\BaseController;
 use App\Models\Product;
 use App\Http\Resources\ProductResource;
 
+
 class ProductController extends BaseController
 {
 
@@ -27,8 +28,13 @@ class ProductController extends BaseController
         if (is_null($product)) {
             return $this->sendError('Product not found.');
         }
+        return view('products.show', compact('product'));
+        //return $this->sendResponse(new ProductResource($products), 'Product retrieved successfully.');
+    }
 
-        return $this->sendResponse(new ProductResource($product), 'Product retrieved successfully.');
+    public function create()
+    {
+        return view('products.create');
     }
 
     public function store(Request $request)

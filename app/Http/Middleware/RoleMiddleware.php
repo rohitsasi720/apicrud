@@ -12,7 +12,7 @@ class RoleMiddleware
     public function handle(Request $request, Closure $next, ...$roles)
     {
         $user = Auth::user();
-
+        Auth::routes(['verify' => true]);
         //dd($user->role);
         //dd($user);
         //dd($roles);

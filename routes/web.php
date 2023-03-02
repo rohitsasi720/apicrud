@@ -1,32 +1,34 @@
 <?php
 
+use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ProductController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
-Route::resource('products', ProductController::class);
+Route::resource('products', ProductController::class)->name('index', 'products');
 
-// Route::get('cart', [mycontroller::class, 'cart'])->name('cart');
-// Route::get('add-to-cart/{id}', [mycontroller::class, 'addToCart'])->name('add.to.cart');
+Route::middleware(['guest'])->group(function () {
+    
+    Route::get('/login', function () {
+        return view('auth.login');
+    })->name('login');
 
-// Route::get('register', [RegisterController::class, 'create'])->middleware('guest');
-// Route::post('register', [RegisterController::class, 'store'])->middleware('guest');
+    Route::get('/register', function () {
+        return view('auth.register');
+    })->name('register');
+});
 
-// Route::get('login', [SessionsController::class, 'create'])->middleware('guest');
-// Route::post('login', [SessionsController::class, 'store'])->middleware('guest');
+Route::middleware(['auth'])->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Route::post('logout', [SessionsController::class, 'destroy'])->middleware('auth');
-Auth::routes();
+});
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('product/create', [ProductController::class, 'create'])->name('products.create');
+Route::get('product/{product}', [ProductController::class, 'show'])->name('products.show');
+
+
+//Auth::routes();
+
+
+//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

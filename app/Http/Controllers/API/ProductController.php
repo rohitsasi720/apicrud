@@ -18,23 +18,19 @@ class ProductController extends BaseController
         $products = product::latest()->paginate(5);
 
         return view('products.index', compact('products'))
-        ->with('i', (request()->input('page', 1) - 1) * 5);
+            ->with('i', (request()->input('page', 1) - 1) * 5);
         return $this->sendResponse(ProductResource::collection($products), 'Products retrieved successfully.');
     }
 
     public function show($id)
     {
+        //dd($id);
         $product = Product::find($id);
         if (is_null($product)) {
             return $this->sendError('Product not found.');
         }
-        return view('products.show', compact('product'));
-        //return $this->sendResponse(new ProductResource($products), 'Product retrieved successfully.');
-    }
-
-    public function create()
-    {
-        return view('products.create');
+        // return view('products.show', compact('product'));
+        return $this->sendResponse(new ProductResource($product), 'Product retrieved successfully.');
     }
 
     public function store(Request $request)
@@ -44,30 +40,46 @@ class ProductController extends BaseController
             'name' => 'required',
             'price' => 'required',
             'category' => 'required',
-            'image' => 'required'
+            'image' => 'required|mimes:jpg,png,jpeg,gif,svg|max:2048'
         ]);
 
+        //$image_path = $request->file('image')->storeAs('public/images', $request->file('image')->getClientOriginalName());
         $name = $request->input('name');
         $existingProduct = Product::where('name', $name)->first();
 
         if ($existingProduct) {
             $input = $request->all();
+
+            if ($image = $request->file('image')) {
+                $destinationPath = 'images/';
+                $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+                $image->move($destinationPath, $profileImage);
+                $input['image'] = "$profileImage";
+            }
+
             $newProduct = Product::create($input);
+
             $input['handle'] = str_replace(' ', '-', $name) . '-' . $newProduct->id;
             $newProduct->update(['handle' => $input['handle']]);
             return response()->json(['message' => 'Product created successfully.'], 201);
         } else {
             $input = $request->all();
             $input['handle'] = str_replace(' ', '-', $name);
+
+            if ($image = $request->file('image')) {
+                $destinationPath = 'images/';
+                $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+                $image->move($destinationPath, $profileImage);
+                $input['image'] = "$profileImage";
+            }
+
             $newProduct = Product::create($input);
             return response()->json(['message' => 'Product created successfully.'], 201);
         }
     }
 
-
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
-        
         $request->validate([
             'name' => 'required',
             'price' => 'required',
@@ -80,6 +92,13 @@ class ProductController extends BaseController
             $name = $request->input('name');
             $existingProduct = Product::where('name', $name)->first();
             $input = $request->all();
+
+            if ($image = $request->file('image')) {
+                $destinationPath = 'images/';
+                $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+                $image->move($destinationPath, $profileImage);
+                $input['image'] = "$profileImage";
+            }
 
             if ($existingProduct) {
                 $input['handle'] = str_replace(' ', '-', $name) . '-' . $product->id;

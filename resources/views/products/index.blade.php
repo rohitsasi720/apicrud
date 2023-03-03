@@ -28,7 +28,7 @@
             <th width="280px">RUD Operation</th>
         </tr>
         @foreach ($products as $product)
-        <tr>
+        <tr class="product-row" data-product-id="{{ $product->id }}">
             <td>{{ ++$i }}</td>
             <td>{{ $product->handle }}</td>
             <td>{{ $product->name }}</td>
@@ -37,7 +37,7 @@
             <td><img src="/images/{{ $product->image }}" width="100px"></td>
             <td>
                     <button type="button" class="btn btn-success" onclick="event.preventDefault(); showProduct({{ $product->id }})">Show</button>
-                    <a class="btn btn-primary" href="{{ route('products.update',$product->id) }}">Edit</a>
+                    <a class="btn btn-primary" href="{{ route('products.edit',$product->id) }}">Edit</a>
                     <button type="button" class="btn btn-danger" onclick="event.preventDefault(); deleteProduct({{ $product->id }})">Delete</button>
             </td>
         </tr>
@@ -51,7 +51,6 @@
 
     const alertMessage = sessionStorage.getItem("alertMessage");
 if (alertMessage) {
-    // Display the alert message
     const alertDiv = document.createElement("div");
     alertDiv.className = "alert alert-success my-2";
     alertDiv.innerHTML = `<p>${alertMessage}</p>`;
@@ -62,12 +61,24 @@ if (alertMessage) {
 async function showProduct(productId) {
   try {
     const product = await getProductApi(productId);
-    window.location.href = `/products/${productId}`;
+    // const row = document.querySelector(`tr[data-product-id="${productId}"]`);
+    // //console.log(row);
+    // if (row) {
+    //   row.querySelector("td:nth-child(2)").textContent = product.handle;
+    //   row.querySelector("td:nth-child(3)").textContent = product.name;
+    //   row.querySelector("td:nth-child(4)").textContent = product.category;
+    //   row.querySelector("td:nth-child(5)").textContent = product.price;
+    //   row.querySelector("td:nth-child(6) img").src = `/images/${product.image}`;
+    // }
+    window.location.href = `/web/products/${productId}`;
   } catch (error) {
     console.error(error);
     alert("Failed to retrieve product. Please try again later.");
   }
 }
+
+
+
 
 async function deleteProduct(productId) {
   try {

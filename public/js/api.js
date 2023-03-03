@@ -10,14 +10,14 @@ async function getProducts() {
 }
 
 async function getProductApi(productId) {
-    console.log(productId);
     const response = await fetch(`${apiUrl}/${productId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${localStorage.getItem("token")}`,   
-    }});
-console.log(response);
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+    });
+    //console.log(response);
     const data = await response.json();
     return data;
 }
@@ -29,6 +29,8 @@ async function createProductApi(product) {
         formData.append("category", product.category);
         formData.append("price", product.price);
         formData.append("image", product.image);
+
+        
 
         const response = await fetch(apiUrl, {
             method: "POST",
@@ -50,18 +52,38 @@ async function createProductApi(product) {
     }
 }
 
-async function updateProduct(productId, product) {
-    const response = await fetch(`${apiUrl}/${productId}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(product),
-    });
-    const data = await response.json();
-    return data;
+async function updateProductApi(product, productId) {
+    try {
+        const data = {
+            name: product.name,
+            category: product.category,
+            price: product.price,
+            image: document.getElementById("image").files[0],
+        };
+
+        const url = `${apiUrl}/${productId}`;
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to update product");
+        }
+
+        const responseData = await response.json();
+        return responseData;
+    } catch (error) {
+        console.error(error);
+        throw new Error("Failed to update product");
+    }
 }
+
+
 
 async function deleteProductApi(productId) {
     const response = await fetch(`${apiUrl}/${productId}`, {

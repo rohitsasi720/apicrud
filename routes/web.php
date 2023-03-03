@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\API\ProductController;
+use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 
-Route::resource('products', ProductController::class)->name('index', 'products');
+//Route::resource('products', ProductController::class);
 
 Route::middleware(['guest'])->group(function () {
     
@@ -24,8 +24,16 @@ Route::middleware(['auth'])->group(function () {
 
 });
 
-Route::get('product/create', [ProductController::class, 'create'])->name('products.create');
-Route::get('product/{product}', [ProductController::class, 'show'])->name('products.show');
+
+Route::prefix('web')->group(function () {
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+    Route::get('/products/edit/{id}', [ProductController::class, 'edit'])->name('products.edit');
+    Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+});
+
+// Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 
 
 //Auth::routes();
